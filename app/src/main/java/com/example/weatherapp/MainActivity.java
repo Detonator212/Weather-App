@@ -18,6 +18,15 @@ import com.example.weatherapp.databinding.ActivityMainBinding;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.io.Console;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration appBarConfiguration;
@@ -43,12 +52,48 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://api.openweathermap.org/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        WeatherAPI weatherAPI = retrofit.create(WeatherAPI.class);
+
+        Call<WeatherBlockRoot> call = weatherAPI.getWeather();
+
+        call.enqueue(new Callback<WeatherBlockRoot>() {
+            @Override
+            public void onResponse(Call<WeatherBlockRoot> call, Response<WeatherBlockRoot> response) {
+                if (!response.isSuccessful()) {
+                    System.out.println("Code: " + response.code());
+                    return;
+                }
+
+                WeatherBlockRoot weatherBlockRoot = (WeatherBlockRoot) response.body();
+                List<WeatherBlock> weatherBlocks = weatherBlockRoot.getWeatherBlocks();
+                for (WeatherBlock weatherBlock : weatherBlocks) {
+                    String content = "";
+                    content += "Temperature: " + weatherBlock.getMain().getTemp() + "\n";
+                    content += "Feels Like: " + weatherBlock.getMain().getFeels_like() + "\n";
+                    content += "Weather Description: " + weatherBlock.getWeather().get(0).getDescription();
+                    System.out.println(content);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WeatherBlockRoot> call, Throwable t) {
+                System.out.println("API request failed");
+            }
+        });
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
         return true;
     }
 
