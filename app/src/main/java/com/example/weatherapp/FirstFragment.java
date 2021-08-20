@@ -61,9 +61,10 @@ public class FirstFragment extends Fragment {
                     WeatherBlockUI newWeatherBlockUI = new WeatherBlockUI(getContext(), null);
 
                     newWeatherBlockUI.setTemperature(weatherBlock.getMain().getTemp());
-                    newWeatherBlockUI.setDescription(weatherBlock.getWeather().get(0).getDescription());
-                    newWeatherBlockUI.setTime(weatherBlock.getTime().substring(11, 16));
                     newWeatherBlockUI.setIcon(weatherBlock.getWeather().get(0).getIcon());
+                    newWeatherBlockUI.setDescription(weatherBlock.getWeather().get(0).getDescription());
+                    newWeatherBlockUI.setDate(weatherBlock.getTime().substring(0, 10));
+                    newWeatherBlockUI.setTime(weatherBlock.getTime().substring(11, 16));
 
                     LinearLayout linearLayout = binding.weatherBlocksLinearLayout;
                     linearLayout.addView(newWeatherBlockUI);

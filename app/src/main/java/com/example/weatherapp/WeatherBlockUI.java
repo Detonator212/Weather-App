@@ -11,11 +11,17 @@ import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
+
 public class WeatherBlockUI extends LinearLayout {
 
     TextView temperature;
     ImageView image;
     TextView description;
+    TextView day;
     TextView time;
 
     public WeatherBlockUI(Context context, @Nullable AttributeSet attrs) {
@@ -26,6 +32,7 @@ public class WeatherBlockUI extends LinearLayout {
         temperature = findViewById(R.id.temperature);
         image = findViewById(R.id.image);
         description = findViewById(R.id.description);
+        day = findViewById(R.id.day);
         time = findViewById(R.id.time);
 
         TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.WeatherBlockUI);
@@ -45,6 +52,18 @@ public class WeatherBlockUI extends LinearLayout {
 
     public void setTime(String time) {
         this.time.setText(time);
+    }
+
+    public void setDate(String date) {
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date date1 = format1.parse(date);
+            DateFormat format2 = new SimpleDateFormat("EEEE");
+            String finalDay = format2.format(date1);
+            this.day.setText(finalDay.substring(0,3));
+        } catch (Exception e) {
+            this.day.setText("n/a");
+        }
     }
 
     public void setIcon(String icon) {
