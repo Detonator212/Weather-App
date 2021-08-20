@@ -36,15 +36,18 @@ public class WeatherBlockUI extends LinearLayout {
     }
 
     public void setTemperature(String temperature) {
-        this.temperature.setText(temperature + "°C");
+        this.temperature.setText(temperature);
     }
 
     public void setDescription(String description) {
         this.description.setText(description);
-        Glide.with(this).load("https://openweathermap.org/img/wn/10d@2x.png").into(image);
     }
 
     public void setTime(String time) {
         this.time.setText(time);
+    }
+
+    public void setIcon(String icon) {
+        Glide.with(this).load("https://openweathermap.org/img/wn/" + icon + "@2x.png").into(image);
     }
 }

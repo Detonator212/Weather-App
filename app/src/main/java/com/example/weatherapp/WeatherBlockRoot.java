@@ -6,9 +6,14 @@ import java.util.ArrayList;
 
 public class WeatherBlockRoot {
     private ArrayList<WeatherBlock> list;
+    private City city;
 
     public ArrayList<WeatherBlock> getWeatherBlocks() {
         return list;
+    }
+
+    public City getCity() {
+        return city;
     }
 }
 
@@ -36,8 +41,8 @@ class Main {
     private float feels_like;
     private int humidity;
 
-    public float getTemp() {
-        return temp;
+    public String getTemp() {
+        return String.valueOf(Math.round(temp - 273.15)) + "°C";
     }
 
     public float getFeels_like() {
@@ -52,14 +57,26 @@ class Main {
 class Weather {
     @SerializedName("main")
     private String weatherType;
-    @SerializedName("description")
-    private String weatherDescription;
+    private String description;
+    private String icon;
 
     public String getMain() {
         return weatherType;
     }
 
     public String getDescription() {
-        return weatherDescription;
+        return description.substring(0,1).toUpperCase() + description.substring(1);
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+}
+
+class City {
+    String name;
+
+    public String getName() {
+        return name;
     }
 }

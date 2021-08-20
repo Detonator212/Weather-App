@@ -53,13 +53,17 @@ public class FirstFragment extends Fragment {
                 WeatherBlockRoot weatherBlockRoot = (WeatherBlockRoot) response.body();
                 List<WeatherBlock> weatherBlocks = weatherBlockRoot.getWeatherBlocks();
 
+                binding.currentCity.setText(weatherBlockRoot.getCity().getName());
+                binding.currentTemp.setText(weatherBlocks.get(0).getMain().getTemp());
+                binding.currentWeatherDescription.setText(weatherBlocks.get(0).getWeather().get(0).getDescription());
+
                 for (WeatherBlock weatherBlock : weatherBlocks) {
                     WeatherBlockUI newWeatherBlockUI = new WeatherBlockUI(getContext(), null);
 
-                    newWeatherBlockUI.setTemperature(String.valueOf(Math.round(weatherBlock.getMain().getTemp() - 273.15)));
-                    String description = weatherBlock.getWeather().get(0).getDescription();
-                    newWeatherBlockUI.setDescription(description.substring(0,1).toUpperCase() + description.substring(1));
+                    newWeatherBlockUI.setTemperature(weatherBlock.getMain().getTemp());
+                    newWeatherBlockUI.setDescription(weatherBlock.getWeather().get(0).getDescription());
                     newWeatherBlockUI.setTime(weatherBlock.getTime().substring(11, 16));
+                    newWeatherBlockUI.setIcon(weatherBlock.getWeather().get(0).getIcon());
 
                     LinearLayout linearLayout = binding.weatherBlocksLinearLayout;
                     linearLayout.addView(newWeatherBlockUI);
