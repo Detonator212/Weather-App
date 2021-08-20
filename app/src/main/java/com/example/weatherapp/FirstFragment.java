@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -51,13 +52,19 @@ public class FirstFragment extends Fragment {
 
                 WeatherBlockRoot weatherBlockRoot = (WeatherBlockRoot) response.body();
                 List<WeatherBlock> weatherBlocks = weatherBlockRoot.getWeatherBlocks();
+
                 for (WeatherBlock weatherBlock : weatherBlocks) {
-                    String content = "";
-                    content += "Temperature: " + weatherBlock.getMain().getTemp() + "\n";
-                    content += "Feels Like: " + weatherBlock.getMain().getFeels_like() + "\n";
-                    content += "Weather Description: " + weatherBlock.getWeather().get(0).getDescription();
-                    System.out.println(content);
+                    WeatherBlockUI newWeatherBlockUI = new WeatherBlockUI(getContext(), null);
+
+                    newWeatherBlockUI.setTemperature(String.valueOf(Math.round(weatherBlock.getMain().getTemp() - 273.15)));
+                    String description = weatherBlock.getWeather().get(0).getDescription();
+                    newWeatherBlockUI.setDescription(description.substring(0,1).toUpperCase() + description.substring(1));
+                    newWeatherBlockUI.setTime(weatherBlock.getTime().substring(11, 16));
+
+                    LinearLayout linearLayout = binding.weatherBlocksLinearLayout;
+                    linearLayout.addView(newWeatherBlockUI);
                 }
+
             }
 
             @Override

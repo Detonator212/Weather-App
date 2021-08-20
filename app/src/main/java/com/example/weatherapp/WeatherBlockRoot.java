@@ -15,6 +15,8 @@ public class WeatherBlockRoot {
 class WeatherBlock {
     private Main main;
     private ArrayList<Weather> weather;
+    @SerializedName("dt_txt")
+    private String time;
 
     public Main getMain() {
         return main;
@@ -22,6 +24,10 @@ class WeatherBlock {
 
     public ArrayList<Weather> getWeather() {
         return weather;
+    }
+
+    public String getTime() {
+        return time;
     }
 }
 
