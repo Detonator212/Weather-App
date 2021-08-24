@@ -32,7 +32,22 @@ public class FirstFragment extends Fragment {
 
         binding = FragmentFirstBinding.inflate(inflater, container, false);
 
+        fetchWeatherData();
 
+        return binding.getRoot();
+    }
+
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    public void fetchWeatherData() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.openweathermap.org/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -40,7 +55,7 @@ public class FirstFragment extends Fragment {
 
         WeatherAPI weatherAPI = retrofit.create(WeatherAPI.class);
 
-        Call<WeatherBlockRoot> call = weatherAPI.getWeather();
+        Call<WeatherBlockRoot> call = weatherAPI.getWeather("london", WeatherAPI.apiKey);
 
         call.enqueue(new Callback<WeatherBlockRoot>() {
             @Override
@@ -77,18 +92,5 @@ public class FirstFragment extends Fragment {
                 System.out.println("API request failed");
             }
         });
-
-        return binding.getRoot();
     }
-
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
-
 }
