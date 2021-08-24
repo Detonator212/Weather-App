@@ -13,9 +13,11 @@ import java.util.ArrayList;
 public class CitiesRecViewAdapter extends RecyclerView.Adapter<CitiesRecViewAdapter.ViewHolder> {
 
     private ArrayList<ListCity> listCities = new ArrayList<>();
+    private ArrayList<ListCity> listCitiesCopy = new ArrayList<>();
 
     public void setListCities(ArrayList<ListCity> listCities) {
         this.listCities = listCities;
+        this.listCitiesCopy.addAll(listCities);
     }
 
     public CitiesRecViewAdapter() {
@@ -49,5 +51,23 @@ public class CitiesRecViewAdapter extends RecyclerView.Adapter<CitiesRecViewAdap
             cityName = itemView.findViewById(R.id.city_name);
             countryName = itemView.findViewById(R.id.country_name);
         }
+    }
+
+    public void filter(String text) {
+        listCities.clear();
+        if(text.isEmpty()) {
+            listCities.addAll(listCitiesCopy);
+        } else {
+            text = text.toLowerCase();
+            for (ListCity listCity : listCitiesCopy) {
+                if (listCity.getName().toLowerCase().contains(text) || listCity.getCountry().toLowerCase().contains(text)) {
+                    listCities.add(listCity);
+                }
+            }
+        }
+
+        System.out.println(listCities.size());
+        System.out.println(listCitiesCopy.size());
+        notifyDataSetChanged();
     }
 }
