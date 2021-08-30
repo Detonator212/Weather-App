@@ -13,6 +13,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.weatherapp.databinding.FragmentFirstBinding;
 
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -32,7 +33,13 @@ public class FirstFragment extends Fragment {
 
         binding = FragmentFirstBinding.inflate(inflater, container, false);
 
-        fetchWeatherData();
+        String cityName = ((MainActivity) requireActivity()).cityName;
+
+        if (cityName != null) {
+            fetchWeatherData(cityName);
+        } else {
+            fetchWeatherData("london");
+        }
 
         return binding.getRoot();
     }
@@ -47,7 +54,7 @@ public class FirstFragment extends Fragment {
         binding = null;
     }
 
-    public void fetchWeatherData() {
+    public void fetchWeatherData(String location) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.openweathermap.org/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -55,7 +62,7 @@ public class FirstFragment extends Fragment {
 
         WeatherAPI weatherAPI = retrofit.create(WeatherAPI.class);
 
-        Call<WeatherBlockRoot> call = weatherAPI.getWeather("london", WeatherAPI.apiKey);
+        Call<WeatherBlockRoot> call = weatherAPI.getWeather(location, WeatherAPI.apiKey);
 
         call.enqueue(new Callback<WeatherBlockRoot>() {
             @Override

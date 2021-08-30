@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -19,8 +20,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity implements OnCityClickListener {
 
     private ActivitySearchBinding binding;
 
@@ -57,7 +59,7 @@ public class SearchActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        CitiesRecViewAdapter adapter = new CitiesRecViewAdapter();
+        CitiesRecViewAdapter adapter = new CitiesRecViewAdapter(this);
         adapter.setListCities(listCities);
 
         citiesRecView.setAdapter(adapter);
@@ -65,12 +67,12 @@ public class SearchActivity extends AppCompatActivity {
 
         binding.search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String s) {
+            public boolean onQueryTextSubmit(java.lang.String s) {
                 return false;
             }
 
             @Override
-            public boolean onQueryTextChange(String s) {
+            public boolean onQueryTextChange(java.lang.String s) {
                 adapter.filter(s);
                 return true;
             }
@@ -87,19 +89,26 @@ public class SearchActivity extends AppCompatActivity {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    public String readCitiesJson() {
-        String json = null;
+    public java.lang.String readCitiesJson() {
+        java.lang.String json = null;
         try {
             InputStream is = this.getAssets().open("world-cities.json");
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
-            json = new String(buffer, "UTF-8");
+            json = new java.lang.String(buffer, "UTF-8");
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
         return json;
+    }
+
+    @Override
+    public void onCityClick(String city) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("selected_city", city);
+        startActivity(intent);
     }
 }

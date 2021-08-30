@@ -15,19 +15,22 @@ public class CitiesRecViewAdapter extends RecyclerView.Adapter<CitiesRecViewAdap
     private ArrayList<ListCity> listCities = new ArrayList<>();
     private ArrayList<ListCity> listCitiesCopy = new ArrayList<>();
 
+    private OnCityClickListener onCityClickListener;
+
     public void setListCities(ArrayList<ListCity> listCities) {
         this.listCities = listCities;
         this.listCitiesCopy.addAll(listCities);
     }
 
-    public CitiesRecViewAdapter() {
+    public CitiesRecViewAdapter(OnCityClickListener onCityClickListener) {
+        this.onCityClickListener = onCityClickListener;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.city_list_item, parent, false);
-        ViewHolder holder = new ViewHolder(view);
+        ViewHolder holder = new ViewHolder(view, onCityClickListener);
         return holder;
     }
 
@@ -42,18 +45,29 @@ public class CitiesRecViewAdapter extends RecyclerView.Adapter<CitiesRecViewAdap
         return listCities.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView cityName;
         private TextView countryName;
-        public ViewHolder(@NonNull View itemView) {
+
+        OnCityClickListener onCityClickListener;
+
+        public ViewHolder(@NonNull View itemView, OnCityClickListener onCityClickListener) {
             super(itemView);
             cityName = itemView.findViewById(R.id.city_name);
             countryName = itemView.findViewById(R.id.country_name);
+            this.onCityClickListener = onCityClickListener;
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            onCityClickListener.onCityClick(cityName.getText().toString());
         }
     }
 
-    public void filter(String text) {
+    public void filter(java.lang.String text) {
         listCities.clear();
         if(text.isEmpty()) {
             listCities.addAll(listCitiesCopy);
@@ -65,9 +79,6 @@ public class CitiesRecViewAdapter extends RecyclerView.Adapter<CitiesRecViewAdap
                 }
             }
         }
-
-        System.out.println(listCities.size());
-        System.out.println(listCitiesCopy.size());
         notifyDataSetChanged();
     }
 }
