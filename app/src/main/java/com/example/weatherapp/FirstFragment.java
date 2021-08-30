@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.weatherapp.databinding.FragmentFirstBinding;
 
@@ -24,6 +25,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class FirstFragment extends Fragment {
 
     private FragmentFirstBinding binding;
+    private String cityName;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     public View onCreateView(
@@ -32,8 +35,20 @@ public class FirstFragment extends Fragment {
     ) {
 
         binding = FragmentFirstBinding.inflate(inflater, container, false);
+        cityName = ((MainActivity) requireActivity()).cityName;
+        swipeRefreshLayout = binding.swipeRefreshLayout;
 
-        String cityName = ((MainActivity) requireActivity()).cityName;
+        swipeRefreshLayout.setOnRefreshListener(
+            new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    if (cityName != null) {
+                        fetchWeatherData(cityName);
+                    } else {
+                        fetchWeatherData("london");
+                    }
+                }
+        });
 
         if (cityName != null) {
             fetchWeatherData(cityName);
@@ -92,6 +107,7 @@ public class FirstFragment extends Fragment {
                     linearLayout.addView(newWeatherBlockUI);
                 }
 
+                swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
