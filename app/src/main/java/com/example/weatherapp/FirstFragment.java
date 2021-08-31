@@ -8,19 +8,15 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.weatherapp.databinding.FragmentFirstBinding;
 
 import java.util.List;
-import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class FirstFragment extends Fragment {
 
@@ -70,15 +66,9 @@ public class FirstFragment extends Fragment {
     }
 
     public void fetchWeatherData(String location) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.openweathermap.org/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        WeatherAPI weatherAPI = retrofit.create(WeatherAPI.class);
+        WeatherAPI weatherAPI = WeatherApiGenerator.createService(WeatherAPI.class);
 
         Call<WeatherBlockRoot> call = weatherAPI.getWeather(location, WeatherAPI.apiKey);
-
         call.enqueue(new Callback<WeatherBlockRoot>() {
             @Override
             public void onResponse(Call<WeatherBlockRoot> call, Response<WeatherBlockRoot> response) {
@@ -87,7 +77,7 @@ public class FirstFragment extends Fragment {
                     return;
                 }
 
-                WeatherBlockRoot weatherBlockRoot = (WeatherBlockRoot) response.body();
+                WeatherBlockRoot weatherBlockRoot = response.body();
                 List<WeatherBlock> weatherBlocks = weatherBlockRoot.getWeatherBlocks();
 
                 binding.currentCity.setText(weatherBlockRoot.getCity().getName());
