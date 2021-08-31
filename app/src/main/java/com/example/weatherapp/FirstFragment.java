@@ -1,5 +1,6 @@
 package com.example.weatherapp;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,15 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.weatherapp.databinding.FragmentFirstBinding;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -24,11 +34,20 @@ public class FirstFragment extends Fragment {
     private String cityName;
     private SwipeRefreshLayout swipeRefreshLayout;
 
+//    File path = getContext().getFilesDir();
+//    File file = new File(path, "Cities.txt");
+
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
+
+        saveCity("london");
+        saveCity("paris");
+        saveCity("milan");
+        saveCity("kabul");
+        readFile();
 
         binding = FragmentFirstBinding.inflate(inflater, container, false);
         cityName = ((MainActivity) requireActivity()).cityName;
@@ -105,5 +124,47 @@ public class FirstFragment extends Fragment {
                 System.out.println("API request failed");
             }
         });
+    }
+
+    public void saveCity(String text) {
+
+        List<String> citiesList = readFile();
+        citiesList.add(text);
+
+        try {
+            FileOutputStream fileOutputStream = getContext().openFileOutput("Cities.txt", Context.MODE_PRIVATE);
+            for(String string : citiesList) {
+                fileOutputStream.write((string + "\n").getBytes());
+            }
+            fileOutputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<String> readFile() {
+
+        List<String> citiesList = new ArrayList<String>();
+
+        try {
+            FileInputStream fileInputStream = getActivity().openFileInput("Cities.txt");
+            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
+
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+            String lines;
+            while((lines = bufferedReader.readLine()) != null) {
+                citiesList.add(lines);
+            }
+            System.out.println(citiesList);
+            return citiesList;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
