@@ -33,9 +33,7 @@ public class FirstFragment extends Fragment {
     private FragmentFirstBinding binding;
     private String cityName;
     private SwipeRefreshLayout swipeRefreshLayout;
-
-//    File path = getContext().getFilesDir();
-//    File file = new File(path, "Cities.txt");
+    private LinearLayout linearLayout;
 
     @Override
     public View onCreateView(
@@ -43,33 +41,36 @@ public class FirstFragment extends Fragment {
             Bundle savedInstanceState
     ) {
 
-        saveCity("london");
-        saveCity("paris");
-        saveCity("milan");
-        saveCity("kabul");
-        readFile();
-
         binding = FragmentFirstBinding.inflate(inflater, container, false);
         cityName = ((MainActivity) requireActivity()).cityName;
         swipeRefreshLayout = binding.swipeRefreshLayout;
+        linearLayout = binding.linearLayout;
 
-        swipeRefreshLayout.setOnRefreshListener(
-            new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    if (cityName != null) {
-                        fetchWeatherData(cityName);
-                    } else {
-                        fetchWeatherData("london");
-                    }
-                }
-        });
+//        swipeRefreshLayout.setOnRefreshListener(
+//            new SwipeRefreshLayout.OnRefreshListener() {
+//                @Override
+//                public void onRefresh() {
+//                    if (cityName != null) {
+//                        fetchWeatherData(cityName);
+//                    } else {
+//                        fetchWeatherData("london");
+//                    }
+//                }
+//        });
 
-        if (cityName != null) {
-            fetchWeatherData(cityName);
-        } else {
-            fetchWeatherData("london");
+        List<String> cities = readFile();
+        for (String city : cities) {
+            WeatherBlocksContainer newWeatherBlocksContainer = new WeatherBlocksContainer(getContext());
+            newWeatherBlocksContainer.setLocationTitle(city);
+            linearLayout.addView(newWeatherBlocksContainer);
+            fetchWeatherData(city, newWeatherBlocksContainer);
         }
+
+//        if (cityName != null) {
+//            fetchWeatherData(cityName);
+//        } else {
+//            fetchWeatherData("london");
+//        }
 
         return binding.getRoot();
     }
@@ -84,7 +85,7 @@ public class FirstFragment extends Fragment {
         binding = null;
     }
 
-    public void fetchWeatherData(String location) {
+    public void fetchWeatherData(String location, WeatherBlocksContainer weatherBlocksContainer) {
         WeatherAPI weatherAPI = WeatherApiGenerator.createService(WeatherAPI.class);
 
         Call<WeatherBlockRoot> call = weatherAPI.getWeather(location, WeatherAPI.apiKey);
@@ -99,9 +100,10 @@ public class FirstFragment extends Fragment {
                 WeatherBlockRoot weatherBlockRoot = response.body();
                 List<WeatherBlock> weatherBlocks = weatherBlockRoot.getWeatherBlocks();
 
-                binding.currentCity.setText(weatherBlockRoot.getCity().getName());
-                binding.currentTemp.setText(weatherBlocks.get(0).getMain().getTemp());
-                binding.currentWeatherDescription.setText(weatherBlocks.get(0).getWeather().get(0).getDescription());
+                // Sets the text at top of screen
+//                binding.currentCity.setText(weatherBlockRoot.getCity().getName());
+//                binding.currentTemp.setText(weatherBlocks.get(0).getMain().getTemp());
+//                binding.currentWeatherDescription.setText(weatherBlocks.get(0).getWeather().get(0).getDescription());
 
                 for (WeatherBlock weatherBlock : weatherBlocks) {
                     WeatherBlockUI newWeatherBlockUI = new WeatherBlockUI(getContext(), null);
@@ -112,7 +114,7 @@ public class FirstFragment extends Fragment {
                     newWeatherBlockUI.setDate(weatherBlock.getTime().substring(0, 10));
                     newWeatherBlockUI.setTime(weatherBlock.getTime().substring(11, 16));
 
-                    LinearLayout linearLayout = binding.weatherBlocksLinearLayout;
+                    LinearLayout linearLayout = weatherBlocksContainer.linearLayout;
                     linearLayout.addView(newWeatherBlockUI);
                 }
 
@@ -126,30 +128,12 @@ public class FirstFragment extends Fragment {
         });
     }
 
-    public void saveCity(String text) {
-
-        List<String> citiesList = readFile();
-        citiesList.add(text);
-
-        try {
-            FileOutputStream fileOutputStream = getContext().openFileOutput("Cities.txt", Context.MODE_PRIVATE);
-            for(String string : citiesList) {
-                fileOutputStream.write((string + "\n").getBytes());
-            }
-            fileOutputStream.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public List<String> readFile() {
 
-        List<String> citiesList = new ArrayList<String>();
+        List<String> citiesList = new ArrayList<>();
 
         try {
-            FileInputStream fileInputStream = getActivity().openFileInput("Cities.txt");
+            FileInputStream fileInputStream = getContext().openFileInput("Cities.txt");
             InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
 
             BufferedReader bufferedReader = new BufferedReader(inputStreamReader);

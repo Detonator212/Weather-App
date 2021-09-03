@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -17,8 +18,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,6 +115,49 @@ public class SearchActivity extends AppCompatActivity implements OnCityClickList
     public void onCityClick(String city) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("selected_city", city);
+        saveCity(city);
         startActivity(intent);
+    }
+
+    public void saveCity(String text) {
+
+        List<String> citiesList = readFile();
+        citiesList.add(text);
+
+        try {
+            FileOutputStream fileOutputStream = openFileOutput("Cities.txt", Context.MODE_PRIVATE);
+            for(String string : citiesList) {
+                fileOutputStream.write((string + "\n").getBytes());
+            }
+            fileOutputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<String> readFile() {
+
+        List<String> citiesList = new ArrayList<>();
+
+        try {
+            FileInputStream fileInputStream = openFileInput("Cities.txt");
+            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
+
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+            String lines;
+            while((lines = bufferedReader.readLine()) != null) {
+                citiesList.add(lines);
+            }
+            System.out.println(citiesList);
+            return citiesList;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
