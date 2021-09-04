@@ -115,49 +115,8 @@ public class SearchActivity extends AppCompatActivity implements OnCityClickList
     public void onCityClick(String city) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("selected_city", city);
-        saveCity(city);
+        FileAccessor fileAccessor = new FileAccessor(this);
+        fileAccessor.saveCity(city);
         startActivity(intent);
-    }
-
-    public void saveCity(String text) {
-
-        List<String> citiesList = readFile();
-        citiesList.add(text);
-
-        try {
-            FileOutputStream fileOutputStream = openFileOutput("Cities.txt", Context.MODE_PRIVATE);
-            for(String string : citiesList) {
-                fileOutputStream.write((string + "\n").getBytes());
-            }
-            fileOutputStream.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public List<String> readFile() {
-
-        List<String> citiesList = new ArrayList<>();
-
-        try {
-            FileInputStream fileInputStream = openFileInput("Cities.txt");
-            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
-
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-            String lines;
-            while((lines = bufferedReader.readLine()) != null) {
-                citiesList.add(lines);
-            }
-            System.out.println(citiesList);
-            return citiesList;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

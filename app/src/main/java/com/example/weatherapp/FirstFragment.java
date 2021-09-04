@@ -45,7 +45,8 @@ public class FirstFragment extends Fragment {
         binding = FragmentFirstBinding.inflate(inflater, container, false);
         cityName = ((MainActivity) requireActivity()).cityName;
         swipeRefreshLayout = binding.swipeRefreshLayout;
-        cities = readFile();
+        FileAccessor fileAccessor = new FileAccessor(getContext());
+        cities = fileAccessor.readFile();
         linearLayout = binding.linearLayout;
 
 //        swipeRefreshLayout.setOnRefreshListener(
@@ -126,29 +127,5 @@ public class FirstFragment extends Fragment {
                 System.out.println("API request failed");
             }
         });
-    }
-
-    public List<String> readFile() {
-
-        List<String> citiesList = new ArrayList<>();
-
-        try {
-            FileInputStream fileInputStream = getContext().openFileInput("Cities.txt");
-            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
-
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-            String lines;
-            while((lines = bufferedReader.readLine()) != null) {
-                citiesList.add(lines);
-            }
-            System.out.println(citiesList);
-            return citiesList;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }
