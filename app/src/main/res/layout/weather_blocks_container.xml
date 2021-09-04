@@ -16,8 +16,7 @@
         android:textSize="30sp"
         android:textColor="@color/white"
         android:shadowColor="@color/text_shadow"
-        android:shadowRadius="20"
-        android:text="Paris">
+        android:shadowRadius="20">
     </TextView>
 
     <androidx.cardview.widget.CardView
@@ -46,8 +45,7 @@
                 android:layout_height="match_parent"
                 android:paddingStart="15dp"
                 android:paddingEnd="15dp"
-                android:orientation="horizontal">
-            </LinearLayout>
+                android:orientation="horizontal"/>
 
 
         </HorizontalScrollView>

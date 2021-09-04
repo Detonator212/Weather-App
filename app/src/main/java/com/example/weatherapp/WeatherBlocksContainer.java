@@ -26,4 +26,8 @@ public class WeatherBlocksContainer extends LinearLayout {
     public void setLocationTitle(String locationTitle) {
         this.locationTitle.setText(locationTitle);
     }
+
+    public void removeLocationTitle() {
+        this.removeView(locationTitle);
+    }
 }

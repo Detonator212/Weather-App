@@ -34,6 +34,7 @@ public class FirstFragment extends Fragment {
     private String cityName;
     private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayout linearLayout;
+    List<String> cities;
 
     @Override
     public View onCreateView(
@@ -44,6 +45,7 @@ public class FirstFragment extends Fragment {
         binding = FragmentFirstBinding.inflate(inflater, container, false);
         cityName = ((MainActivity) requireActivity()).cityName;
         swipeRefreshLayout = binding.swipeRefreshLayout;
+        cities = readFile();
         linearLayout = binding.linearLayout;
 
 //        swipeRefreshLayout.setOnRefreshListener(
@@ -58,19 +60,14 @@ public class FirstFragment extends Fragment {
 //                }
 //        });
 
-        List<String> cities = readFile();
         for (String city : cities) {
             WeatherBlocksContainer newWeatherBlocksContainer = new WeatherBlocksContainer(getContext());
             newWeatherBlocksContainer.setLocationTitle(city);
+            if (city.equals(cities.get(0))){
+            newWeatherBlocksContainer.locationTitle.setVisibility(getView().GONE); }
             linearLayout.addView(newWeatherBlocksContainer);
             fetchWeatherData(city, newWeatherBlocksContainer);
         }
-
-//        if (cityName != null) {
-//            fetchWeatherData(cityName);
-//        } else {
-//            fetchWeatherData("london");
-//        }
 
         return binding.getRoot();
     }
@@ -100,10 +97,13 @@ public class FirstFragment extends Fragment {
                 WeatherBlockRoot weatherBlockRoot = response.body();
                 List<WeatherBlock> weatherBlocks = weatherBlockRoot.getWeatherBlocks();
 
-                // Sets the text at top of screen
-//                binding.currentCity.setText(weatherBlockRoot.getCity().getName());
-//                binding.currentTemp.setText(weatherBlocks.get(0).getMain().getTemp());
-//                binding.currentWeatherDescription.setText(weatherBlocks.get(0).getWeather().get(0).getDescription());
+                // If this is the first city in the user's saved cities then set the text at top of screen
+                if (location.equals(cities.get(0))) {
+                    binding.currentCity.setText(weatherBlockRoot.getCity().getName());
+                    binding.currentTemp.setText(weatherBlocks.get(0).getMain().getTemp());
+                    binding.currentWeatherDescription.setText(weatherBlocks.get(0).getWeather().get(0).getDescription());
+                }
+
 
                 for (WeatherBlock weatherBlock : weatherBlocks) {
                     WeatherBlockUI newWeatherBlockUI = new WeatherBlockUI(getContext(), null);
