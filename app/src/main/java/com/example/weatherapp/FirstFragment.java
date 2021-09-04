@@ -43,9 +43,16 @@ public class FirstFragment extends Fragment {
     ) {
 
         binding = FragmentFirstBinding.inflate(inflater, container, false);
+
         cityName = ((MainActivity) requireActivity()).cityName;
         swipeRefreshLayout = binding.swipeRefreshLayout;
+
         FileAccessor fileAccessor = new FileAccessor(getContext());
+
+        if (!(citiesFileExists())) {
+            fileAccessor.createDefaultFile("London");
+        }
+
         cities = fileAccessor.readFile();
         linearLayout = binding.linearLayout;
 
@@ -60,6 +67,8 @@ public class FirstFragment extends Fragment {
 //                    }
 //                }
 //        });
+
+
 
         for (String city : cities) {
             WeatherBlocksContainer newWeatherBlocksContainer = new WeatherBlocksContainer(getContext());
@@ -127,5 +136,16 @@ public class FirstFragment extends Fragment {
                 System.out.println("API request failed");
             }
         });
+    }
+
+    public boolean citiesFileExists() {
+        File dirFiles = getContext().getFilesDir();
+        File[] filesArray = dirFiles.listFiles();
+        for (File file : filesArray) {
+            if (file.getName().equals("Cities.txt")) {
+                return true;
+            }
+        }
+        return false;
     }
 }

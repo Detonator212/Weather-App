@@ -60,4 +60,16 @@ public class FileAccessor {
             e.printStackTrace();
         }
     }
+
+    public void createDefaultFile(String text) {
+        try {
+            FileOutputStream fileOutputStream = context.openFileOutput("Cities.txt", Context.MODE_PRIVATE);
+            fileOutputStream.write((text + "\n").getBytes());
+            fileOutputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
