@@ -35,6 +35,7 @@ public class FirstFragment extends Fragment {
     private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayout linearLayout;
     List<String> cities;
+    private int numRefreshedLocations = 0;
 
     @Override
     public View onCreateView(
@@ -56,28 +57,16 @@ public class FirstFragment extends Fragment {
         cities = fileAccessor.readFile();
         linearLayout = binding.linearLayout;
 
-//        swipeRefreshLayout.setOnRefreshListener(
-//            new SwipeRefreshLayout.OnRefreshListener() {
-//                @Override
-//                public void onRefresh() {
-//                    if (cityName != null) {
-//                        fetchWeatherData(cityName);
-//                    } else {
-//                        fetchWeatherData("london");
-//                    }
-//                }
-//        });
+        swipeRefreshLayout.setOnRefreshListener(
+            new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    numRefreshedLocations = 0;
+                    refresh();
+                }
+        });
 
-
-
-        for (String city : cities) {
-            WeatherBlocksContainer newWeatherBlocksContainer = new WeatherBlocksContainer(getContext());
-            newWeatherBlocksContainer.setLocationTitle(city);
-            if (city.equals(cities.get(0))){
-            newWeatherBlocksContainer.locationTitle.setVisibility(getView().GONE); }
-            linearLayout.addView(newWeatherBlocksContainer);
-            fetchWeatherData(city, newWeatherBlocksContainer);
-        }
+        refresh();
 
         return binding.getRoot();
     }
@@ -90,6 +79,36 @@ public class FirstFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    public void refresh() {
+
+        List<WeatherBlocksContainer> weatherBlocksContainers = new ArrayList<>();
+
+        for (int i = 0; i < linearLayout.getChildCount(); i++) {
+            if (linearLayout.getChildAt(i) instanceof WeatherBlocksContainer) {
+                weatherBlocksContainers.add((WeatherBlocksContainer) linearLayout.getChildAt(i));
+            }
+        }
+
+        for (WeatherBlocksContainer weatherBlocksContainer : weatherBlocksContainers) {
+            linearLayout.removeView(weatherBlocksContainer);
+        }
+
+        for (String city : cities) {
+            WeatherBlocksContainer newWeatherBlocksContainer = new WeatherBlocksContainer(getContext());
+            newWeatherBlocksContainer.setLocationTitle(city);
+            if (city.equals(cities.get(0))){
+                newWeatherBlocksContainer.locationTitle.setVisibility(getView().GONE); }
+            linearLayout.addView(newWeatherBlocksContainer);
+            fetchWeatherData(city, newWeatherBlocksContainer);
+        }
+    }
+
+    public void checkIfRefreshComplete() {
+        if (numRefreshedLocations == cities.size()) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 
     public void fetchWeatherData(String location, WeatherBlocksContainer weatherBlocksContainer) {
@@ -128,12 +147,15 @@ public class FirstFragment extends Fragment {
                     linearLayout.addView(newWeatherBlockUI);
                 }
 
-                swipeRefreshLayout.setRefreshing(false);
+                numRefreshedLocations++;
+                checkIfRefreshComplete();
             }
 
             @Override
             public void onFailure(Call<WeatherBlockRoot> call, Throwable t) {
                 System.out.println("API request failed");
+                numRefreshedLocations++;
+                checkIfRefreshComplete();
             }
         });
     }
