@@ -95,6 +95,7 @@ public class FirstFragment extends Fragment {
     public void refresh() {
         int count = 0;
         for (WeatherBlocksContainer weatherBlocksContainer : weatherBlocksContainers) {
+            weatherBlocksContainer.addLoadingIcon();
             weatherBlocksContainer.clearContents();
             fetchWeatherData(cities.get(count), weatherBlocksContainer);
             count++;
@@ -143,6 +144,7 @@ public class FirstFragment extends Fragment {
                     linearLayout.addView(newWeatherBlockUI);
                 }
 
+                weatherBlocksContainer.removeLoadingIcon();
                 numRefreshedLocations++;
                 checkIfRefreshComplete();
             }
