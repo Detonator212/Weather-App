@@ -30,4 +30,6 @@ public class WeatherBlocksContainer extends LinearLayout {
     public void removeLocationTitle() {
         this.removeView(locationTitle);
     }
+
+    public void clearContents() { linearLayout.removeAllViews(); }
 }

@@ -37,6 +37,9 @@ public class FirstFragment extends Fragment {
     List<String> cities;
     private int numRefreshedLocations = 0;
 
+    List<WeatherBlocksContainer> weatherBlocksContainers = new ArrayList<>();
+
+
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
@@ -66,7 +69,15 @@ public class FirstFragment extends Fragment {
                 }
         });
 
-        refresh();
+        for (String city : cities) {
+            WeatherBlocksContainer newWeatherBlocksContainer = new WeatherBlocksContainer(getContext());
+            newWeatherBlocksContainer.setLocationTitle(city);
+            if (city.equals(cities.get(0))){
+                newWeatherBlocksContainer.locationTitle.setVisibility(getView().GONE); }
+            linearLayout.addView(newWeatherBlocksContainer);
+            weatherBlocksContainers.add(newWeatherBlocksContainer);
+            fetchWeatherData(city, newWeatherBlocksContainer);
+        }
 
         return binding.getRoot();
     }
@@ -82,26 +93,11 @@ public class FirstFragment extends Fragment {
     }
 
     public void refresh() {
-
-        List<WeatherBlocksContainer> weatherBlocksContainers = new ArrayList<>();
-
-        for (int i = 0; i < linearLayout.getChildCount(); i++) {
-            if (linearLayout.getChildAt(i) instanceof WeatherBlocksContainer) {
-                weatherBlocksContainers.add((WeatherBlocksContainer) linearLayout.getChildAt(i));
-            }
-        }
-
+        int count = 0;
         for (WeatherBlocksContainer weatherBlocksContainer : weatherBlocksContainers) {
-            linearLayout.removeView(weatherBlocksContainer);
-        }
-
-        for (String city : cities) {
-            WeatherBlocksContainer newWeatherBlocksContainer = new WeatherBlocksContainer(getContext());
-            newWeatherBlocksContainer.setLocationTitle(city);
-            if (city.equals(cities.get(0))){
-                newWeatherBlocksContainer.locationTitle.setVisibility(getView().GONE); }
-            linearLayout.addView(newWeatherBlocksContainer);
-            fetchWeatherData(city, newWeatherBlocksContainer);
+            weatherBlocksContainer.clearContents();
+            fetchWeatherData(cities.get(count), weatherBlocksContainer);
+            count++;
         }
     }
 
