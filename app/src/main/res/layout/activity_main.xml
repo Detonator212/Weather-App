@@ -34,14 +34,14 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginRight="15dp"
+                    android:layout_marginRight="10dp"
                     android:gravity="center">
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/ic_hamburger_menu"
-                        android:minWidth="30dp"/>
+<!--                    <ImageView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="match_parent"-->
+<!--                        android:src="@drawable/ic_hamburger_menu"-->
+<!--                        android:minWidth="30dp"/>-->
 
                     <View
                         android:layout_width="0dp"
@@ -56,13 +56,20 @@
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter"
-                        android:padding="3dp"/>
+                        android:padding="3dp"
+                        android:layout_marginRight="5dp"/>
 
                     <ImageView
+                        android:id="@+id/popup_menu_button"
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="36dp"
                         android:src="@drawable/ic_more_menu"
-                        android:minWidth="30dp"/>
+                        android:minWidth="30dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:padding="3dp"/>
+
                 </LinearLayout>
 
             </androidx.appcompat.widget.Toolbar>
