@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -48,6 +51,8 @@ public class FirstFragment extends Fragment {
 
         binding = FragmentFirstBinding.inflate(inflater, container, false);
 
+        linearLayout = binding.linearLayout;
+
         cityName = ((MainActivity) requireActivity()).cityName;
         swipeRefreshLayout = binding.swipeRefreshLayout;
 
@@ -58,7 +63,6 @@ public class FirstFragment extends Fragment {
         }
 
         cities = fileAccessor.readFile();
-        linearLayout = binding.linearLayout;
 
         swipeRefreshLayout.setOnRefreshListener(
             new SwipeRefreshLayout.OnRefreshListener() {
@@ -80,6 +84,11 @@ public class FirstFragment extends Fragment {
         }
 
         return binding.getRoot();
+    }
+
+    public void moveAboveNavBar(View v, WindowInsetsCompat windowInsets) {
+        Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+        linearLayout.setPadding(0, 0, 0,insets.bottom);
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {

@@ -13,6 +13,7 @@
         android:scaleType="centerCrop"/>
 
     <LinearLayout
+        android:id="@+id/linear_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainActivity"
@@ -78,7 +79,6 @@
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragment_container_view"
-            android:name="com.example.weatherapp.FirstFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
