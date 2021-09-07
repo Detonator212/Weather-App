@@ -93,7 +93,13 @@ public class MainActivity extends AppCompatActivity {
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
-                        Toast.makeText(MainActivity.this, "You Clicked " + menuItem.getTitle(), Toast.LENGTH_SHORT).show();
+                        switch (menuItem.getItemId()) {
+                            case R.id.settings:
+                                // TODO create settings menu
+                            case R.id.manage_places:
+                                Intent intent = new Intent(view.getContext(), ManagePlacesActivity.class);
+                                startActivity(intent);
+                        }
                         return true;
                     }
                 });
