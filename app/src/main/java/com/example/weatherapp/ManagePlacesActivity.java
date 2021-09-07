@@ -15,6 +15,7 @@ public class ManagePlacesActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private ArrayList<String> places;
+    private ArrayList<String> placesCopy = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +24,7 @@ public class ManagePlacesActivity extends AppCompatActivity {
 
         FileAccessor fileAccessor = new FileAccessor(this);
         places = (ArrayList<String>) fileAccessor.readFile();
+        placesCopy.addAll(places);
 
         ManagePlacesRecViewAdapter adapter = new ManagePlacesRecViewAdapter();
         adapter.setPlaces(places);
@@ -45,9 +47,12 @@ public class ManagePlacesActivity extends AppCompatActivity {
     }
 
     public void goBack() {
+        if (places.equals(placesCopy)) {
+            finish();
+            return;
+        }
         FileAccessor fileAccessor = new FileAccessor(this);
         fileAccessor.overwriteFile(places);
-        ((ManagePlacesRecViewAdapter) recyclerView.getAdapter()).getPlaces();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
