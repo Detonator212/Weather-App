@@ -41,6 +41,7 @@ public class ManagePlacesActivity extends AppCompatActivity {
         ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(recyclerView);
+
     }
 
     public void goBack() {
@@ -49,5 +50,10 @@ public class ManagePlacesActivity extends AppCompatActivity {
         ((ManagePlacesRecViewAdapter) recyclerView.getAdapter()).getPlaces();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        goBack();
     }
 }
