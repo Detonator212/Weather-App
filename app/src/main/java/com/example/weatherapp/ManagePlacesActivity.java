@@ -1,6 +1,7 @@
 package com.example.weatherapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -9,11 +10,10 @@ import android.os.Bundle;
 import android.view.View;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ManagePlacesActivity extends AppCompatActivity {
 
-    private RecyclerView citiesRecView;
+    private RecyclerView recyclerView;
     private ArrayList<String> places;
 
     @Override
@@ -27,9 +27,9 @@ public class ManagePlacesActivity extends AppCompatActivity {
         ManagePlacesRecViewAdapter adapter = new ManagePlacesRecViewAdapter();
         adapter.setPlaces(places);
 
-        citiesRecView = findViewById(R.id.places_list);
-        citiesRecView.setAdapter(adapter);
-        citiesRecView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView = findViewById(R.id.places_list);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -37,9 +37,16 @@ public class ManagePlacesActivity extends AppCompatActivity {
                 goBack();
             }
         });
+
+        ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(recyclerView);
     }
 
     public void goBack() {
+        FileAccessor fileAccessor = new FileAccessor(this);
+        fileAccessor.overwriteFile(places);
+        ((ManagePlacesRecViewAdapter) recyclerView.getAdapter()).getPlaces();
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }

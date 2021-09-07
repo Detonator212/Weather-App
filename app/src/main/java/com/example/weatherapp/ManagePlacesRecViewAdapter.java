@@ -8,10 +8,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.sql.Struct;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
-public class ManagePlacesRecViewAdapter extends RecyclerView.Adapter<ManagePlacesRecViewAdapter.ViewHolder> {
+public class ManagePlacesRecViewAdapter extends RecyclerView.Adapter<ManagePlacesRecViewAdapter.ViewHolder> implements ItemTouchHelperAdapter {
 
     private List<String> places = new ArrayList<>();
 
@@ -37,6 +40,26 @@ public class ManagePlacesRecViewAdapter extends RecyclerView.Adapter<ManagePlace
         return places.size();
     }
 
+    @Override
+    public void onItemMove(int fromPosition, int toPosition) {
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                Collections.swap(places, i, i + 1);
+            }
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(places, i, i - 1);
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition);
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        places.remove(position);
+        notifyItemRemoved(position);
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private TextView placeName;
@@ -46,5 +69,9 @@ public class ManagePlacesRecViewAdapter extends RecyclerView.Adapter<ManagePlace
 
             placeName = itemView.findViewById(R.id.place_name);
         }
+    }
+
+    public List<String> getPlaces() {
+        return places;
     }
 }

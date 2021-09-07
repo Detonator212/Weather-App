@@ -72,4 +72,18 @@ public class FileAccessor {
             e.printStackTrace();
         }
     }
+
+    public void overwriteFile(List<String> places) {
+        try {
+            FileOutputStream fileOutputStream = context.openFileOutput("Cities.txt", Context.MODE_PRIVATE);
+            for(String string : places) {
+                fileOutputStream.write((string + "\n").getBytes());
+            }
+            fileOutputStream.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
