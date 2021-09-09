@@ -3,6 +3,7 @@ package com.example.weatherapp;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -14,6 +15,7 @@ import com.bumptech.glide.Glide;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Date;
 
 public class WeatherBlockUI extends LinearLayout {
@@ -68,5 +70,19 @@ public class WeatherBlockUI extends LinearLayout {
 
     public void setIcon(String icon) {
         Glide.with(this).load("https://openweathermap.org/img/wn/" + icon + "@2x.png").into(image);
+    }
+
+    public void setTheme(Boolean light) {
+        if (light) {
+            temperature.setTextColor(Color.BLACK);
+            description.setTextColor(Color.BLACK);
+            day.setTextColor(Color.BLACK);
+            time.setTextColor(Color.BLACK);
+        } else {
+            temperature.setTextColor(Color.WHITE);
+            description.setTextColor(Color.WHITE);
+            day.setTextColor(Color.WHITE);
+            time.setTextColor(Color.WHITE);
+        }
     }
 }

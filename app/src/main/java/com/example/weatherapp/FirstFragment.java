@@ -1,6 +1,5 @@
 package com.example.weatherapp;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,21 +8,13 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.weatherapp.databinding.FragmentFirstBinding;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,10 +30,12 @@ public class FirstFragment extends Fragment {
     private LinearLayout linearLayout;
     List<String> cities;
     private int numRefreshedLocations = 0;
+    Boolean lightCardTheme = true;
 
     MainActivity activity;
 
     List<WeatherBlocksContainer> weatherBlocksContainers = new ArrayList<>();
+    List<WeatherBlockUI> weatherBlockUIS = new ArrayList<>();
 
     public FirstFragment(MainActivity activity) {
         this.activity = activity;
@@ -108,6 +101,7 @@ public class FirstFragment extends Fragment {
     }
 
     public void refresh() {
+        weatherBlockUIS = new ArrayList<>();
         int count = 0;
         for (WeatherBlocksContainer weatherBlocksContainer : weatherBlocksContainers) {
             weatherBlocksContainer.addLoadingIcon();
@@ -143,7 +137,7 @@ public class FirstFragment extends Fragment {
                     binding.currentCity.setText(weatherBlockRoot.getCity().getName());
                     binding.currentTemp.setText(weatherBlocks.get(0).getMain().getTemp());
                     binding.currentWeatherDescription.setText(weatherBlocks.get(0).getWeather().get(0).getDescription());
-                    setBackground(weatherBlockRoot.getWeatherBlocks().get(0).getWeather().get(0).getIcon());
+                    setTheme(weatherBlockRoot.getWeatherBlocks().get(0).getWeather().get(0).getIcon());
                 }
 
 
@@ -155,6 +149,9 @@ public class FirstFragment extends Fragment {
                     newWeatherBlockUI.setDescription(weatherBlock.getWeather().get(0).getDescription());
                     newWeatherBlockUI.setDate(weatherBlock.getTime().substring(0, 10));
                     newWeatherBlockUI.setTime(weatherBlock.getTime().substring(11, 16));
+
+                    weatherBlockUIS.add(newWeatherBlockUI);
+                    newWeatherBlockUI.setTheme(lightCardTheme);
 
                     LinearLayout linearLayout = weatherBlocksContainer.linearLayout;
                     linearLayout.addView(newWeatherBlockUI);
@@ -185,42 +182,58 @@ public class FirstFragment extends Fragment {
         return false;
     }
 
-    public void setBackground(String icon) {
+    public void setTheme(String icon) {
         icon = icon.substring(0,2);
         String background;
         switch (icon) {
             case "01":
                 background = "clear";
+                lightCardTheme = true;
                 break;
             case "02":
                 background = "fewclouds";
+                lightCardTheme = true;
                 break;
             case "03":
                 background = "scatteredclouds";
+                lightCardTheme = false;
                 break;
             case "04":
                 background = "brokenclouds";
+                lightCardTheme = false;
                 break;
             case "09":
                 background = "showerrain";
+                lightCardTheme = false;
                 break;
             case "10":
                 background = "rain";
+                lightCardTheme = false;
                 break;
             case "11":
                 background = "thunderstorm";
+                lightCardTheme = false;
                 break;
             case "13":
                 background = "snow";
+                lightCardTheme = true;
                 break;
             case "50":
                 background = "mist";
+                lightCardTheme = true;
                 break;
             default:
+                lightCardTheme = false;
                 throw new IllegalStateException("Unexpected value: " + icon);
         }
         // TODO add night backgrounds
-        activity.backgroundImage.setImageResource(getResources().getIdentifier(background + "_day", "drawable", getContext().getPackageName())
-        );
+        activity.backgroundImage.setImageResource(getResources().getIdentifier(background + "_day", "drawable", getContext().getPackageName()));
+
+        for (WeatherBlocksContainer weatherBlocksContainer : weatherBlocksContainers) {
+            weatherBlocksContainer.setCardColor(lightCardTheme);
+        }
+        for (WeatherBlockUI weatherBlockUI : weatherBlockUIS) {
+            weatherBlockUI.setTheme(lightCardTheme);
+        }
     }
 }

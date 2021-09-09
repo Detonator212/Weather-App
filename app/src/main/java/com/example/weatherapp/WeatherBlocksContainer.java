@@ -1,6 +1,7 @@
 package com.example.weatherapp;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -39,4 +40,12 @@ public class WeatherBlocksContainer extends LinearLayout {
     public void removeLoadingIcon() { cardView.removeView(progressBar); }
 
     public void addLoadingIcon() { cardView.addView(progressBar); }
+
+    public void setCardColor(Boolean lightCard) {
+        if (lightCard) {
+            cardView.getBackground().setTint(Color.WHITE);
+        } else {
+            cardView.getBackground().setTint(Color.DKGRAY);
+        }
+    }
 }
