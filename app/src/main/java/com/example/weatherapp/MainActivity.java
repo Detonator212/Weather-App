@@ -28,6 +28,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowInsets;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.Toast;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     Intent i;
     String cityName;
+    ImageView backgroundImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +62,9 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        FirstFragment firstFragment = new FirstFragment();
+        backgroundImage = binding.backgroundImage;
+
+        FirstFragment firstFragment = new FirstFragment(this);
         getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
                 .add(R.id.fragment_container_view, firstFragment, null)

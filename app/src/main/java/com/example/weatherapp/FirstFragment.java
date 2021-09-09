@@ -40,14 +40,20 @@ public class FirstFragment extends Fragment {
     List<String> cities;
     private int numRefreshedLocations = 0;
 
+    MainActivity activity;
+
     List<WeatherBlocksContainer> weatherBlocksContainers = new ArrayList<>();
 
+    public FirstFragment(MainActivity activity) {
+        this.activity = activity;
+    }
 
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
+
 
         binding = FragmentFirstBinding.inflate(inflater, container, false);
 
@@ -137,6 +143,7 @@ public class FirstFragment extends Fragment {
                     binding.currentCity.setText(weatherBlockRoot.getCity().getName());
                     binding.currentTemp.setText(weatherBlocks.get(0).getMain().getTemp());
                     binding.currentWeatherDescription.setText(weatherBlocks.get(0).getWeather().get(0).getDescription());
+                    setBackground(weatherBlockRoot.getWeatherBlocks().get(0).getWeather().get(0).getIcon());
                 }
 
 
@@ -176,5 +183,44 @@ public class FirstFragment extends Fragment {
             }
         }
         return false;
+    }
+
+    public void setBackground(String icon) {
+        icon = icon.substring(0,2);
+        String background;
+        switch (icon) {
+            case "01":
+                background = "clear";
+                break;
+            case "02":
+                background = "fewclouds";
+                break;
+            case "03":
+                background = "scatteredclouds";
+                break;
+            case "04":
+                background = "brokenclouds";
+                break;
+            case "09":
+                background = "showerrain";
+                break;
+            case "10":
+                background = "rain";
+                break;
+            case "11":
+                background = "thunderstorm";
+                break;
+            case "13":
+                background = "snow";
+                break;
+            case "50":
+                background = "mist";
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + icon);
+        }
+        // TODO add night backgrounds
+        activity.backgroundImage.setImageResource(getResources().getIdentifier(background + "_day", "drawable", getContext().getPackageName())
+        );
     }
 }

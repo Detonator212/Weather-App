@@ -7,9 +7,10 @@
     android:layout_height="match_parent">
 
     <ImageView
+        android:id="@+id/background_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/clouds"
+        android:src="@drawable/rain_day"
         android:scaleType="centerCrop"/>
 
     <LinearLayout
