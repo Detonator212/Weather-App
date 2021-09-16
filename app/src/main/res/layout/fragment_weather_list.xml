@@ -16,7 +16,7 @@
             android:id="@+id/linear_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".FirstFragment"
+            tools:context=".WeatherListFragment"
             android:orientation="vertical"
             android:gravity="center_horizontal"
             android:paddingBottom="30dp">

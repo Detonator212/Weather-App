@@ -12,7 +12,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.example.weatherapp.databinding.FragmentFirstBinding;
+import com.example.weatherapp.databinding.FragmentWeatherListBinding;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -22,47 +22,50 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class FirstFragment extends Fragment {
+/**
+ * Fragment for displaying weather data
+ */
+public class WeatherListFragment extends Fragment {
 
-    private FragmentFirstBinding binding;
-    private String cityName;
+    private FragmentWeatherListBinding binding;
     private SwipeRefreshLayout swipeRefreshLayout;
     private LinearLayout linearLayout;
-    List<String> cities;
+    private List<String> cities;
     private int numRefreshedLocations = 0;
-    Boolean lightCardTheme = true;
+    private Boolean lightCardTheme = true;
 
-    MainActivity activity;
+    /**
+     * The activity this fragment is in
+     */
+    private MainActivity activity;
 
-    List<WeatherBlocksContainer> weatherBlocksContainers = new ArrayList<>();
-    List<WeatherBlockUI> weatherBlockUIS = new ArrayList<>();
+    private List<WeatherBlocksContainer> weatherBlocksContainers = new ArrayList<>();
+    private List<WeatherBlockUI> weatherBlockUIS = new ArrayList<>();
 
-    public FirstFragment(MainActivity activity) {
+    /**
+     * Constructor to define the activity this fragment is in
+     * @param activity The activity this fragment is in
+     */
+    public WeatherListFragment(MainActivity activity) {
         this.activity = activity;
     }
 
     @Override
-    public View onCreateView(
-            LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState
-    ) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-
-        binding = FragmentFirstBinding.inflate(inflater, container, false);
+        binding = FragmentWeatherListBinding.inflate(inflater, container, false);
 
         linearLayout = binding.linearLayout;
-
-        cityName = ((MainActivity) requireActivity()).cityName;
         swipeRefreshLayout = binding.swipeRefreshLayout;
 
         FileAccessor fileAccessor = new FileAccessor(getContext());
-
+        // If no locations save file exists create save file containing London
         if (!(citiesFileExists())) {
             fileAccessor.createDefaultFile("London");
         }
-
         cities = fileAccessor.readFile();
 
+        // Swipe to refresh functionality
         swipeRefreshLayout.setOnRefreshListener(
             new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
@@ -72,6 +75,7 @@ public class FirstFragment extends Fragment {
                 }
         });
 
+        // Initial fetching of all weather data and displaying on UI
         for (String city : cities) {
             WeatherBlocksContainer newWeatherBlocksContainer = new WeatherBlocksContainer(getContext());
             newWeatherBlocksContainer.setLocationTitle(city);
@@ -85,11 +89,6 @@ public class FirstFragment extends Fragment {
         return binding.getRoot();
     }
 
-    public void moveAboveNavBar(View v, WindowInsetsCompat windowInsets) {
-        Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
-        linearLayout.setPadding(0, 0, 0,insets.bottom);
-    }
-
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
     }
@@ -100,7 +99,19 @@ public class FirstFragment extends Fragment {
         binding = null;
     }
 
-    public void refresh() {
+    /**
+     * Move contents above navbar
+     * @param windowInsets System inset sizes
+     */
+    public void moveAboveNavBar(WindowInsetsCompat windowInsets) {
+        Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+        linearLayout.setPadding(0, 0, 0,insets.bottom);
+    }
+
+    /**
+     * Refresh list of weather data
+     */
+    private void refresh() {
         weatherBlockUIS = new ArrayList<>();
         int count = 0;
         for (WeatherBlocksContainer weatherBlocksContainer : weatherBlocksContainers) {
@@ -111,13 +122,21 @@ public class FirstFragment extends Fragment {
         }
     }
 
-    public void checkIfRefreshComplete() {
+    /**
+     * Check if all API requests are flagged as completed
+     */
+    private void checkIfRefreshComplete() {
         if (numRefreshedLocations == cities.size()) {
             swipeRefreshLayout.setRefreshing(false);
         }
     }
 
-    public void fetchWeatherData(String location, WeatherBlocksContainer weatherBlocksContainer) {
+    /**
+     * Fetch weather data from API and display in UI
+     * @param location Name of location to fetch weather data for
+     * @param weatherBlocksContainer Which card view to add fetched data to
+     */
+    private void fetchWeatherData(String location, WeatherBlocksContainer weatherBlocksContainer) {
         WeatherAPI weatherAPI = WeatherApiGenerator.createService(WeatherAPI.class);
 
         Call<WeatherBlockRoot> call = weatherAPI.getWeather(location, WeatherAPI.apiKey);
@@ -140,7 +159,7 @@ public class FirstFragment extends Fragment {
                     setTheme(weatherBlockRoot.getWeatherBlocks().get(0).getWeather().get(0).getIcon());
                 }
 
-
+                // Add each of block of weather data to card view
                 for (WeatherBlock weatherBlock : weatherBlocks) {
                     WeatherBlockUI newWeatherBlockUI = new WeatherBlockUI(getContext(), null);
 
@@ -171,7 +190,10 @@ public class FirstFragment extends Fragment {
         });
     }
 
-    public boolean citiesFileExists() {
+    /**
+     * @return Whether a file containing saved places exists
+     */
+    private boolean citiesFileExists() {
         File dirFiles = getContext().getFilesDir();
         File[] filesArray = dirFiles.listFiles();
         for (File file : filesArray) {
@@ -182,7 +204,11 @@ public class FirstFragment extends Fragment {
         return false;
     }
 
-    public void setTheme(String icon) {
+    /**
+     * Set light or dark theme depending on weather conditions
+     * @param icon OpenWeather assigned icon to these weather conditions
+     */
+    private void setTheme(String icon) {
         icon = icon.substring(0,2);
         String background;
         switch (icon) {
@@ -227,7 +253,7 @@ public class FirstFragment extends Fragment {
                 throw new IllegalStateException("Unexpected value: " + icon);
         }
         // TODO add night backgrounds
-        activity.backgroundImage.setImageResource(getResources().getIdentifier(background + "_day", "drawable", getContext().getPackageName()));
+        activity.setBackgroundImage(background + "_day");
 
         for (WeatherBlocksContainer weatherBlocksContainer : weatherBlocksContainers) {
             weatherBlocksContainer.setCardColor(lightCardTheme);
