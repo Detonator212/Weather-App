@@ -13,19 +13,27 @@ import com.example.weatherapp.FileAccessor;
 import com.example.weatherapp.ItemTouchHelperCallback;
 import com.example.weatherapp.adapters.ManagePlacesRecViewAdapter;
 import com.example.weatherapp.R;
+import com.example.weatherapp.databinding.ActivityManagePlacesBinding;
 
 import java.util.ArrayList;
 
+/**
+ * Activity for managing saved locations
+ */
 public class ManagePlacesActivity extends AppCompatActivity {
 
+    private ActivityManagePlacesBinding binding;
     private RecyclerView recyclerView;
     private ArrayList<String> places;
-    private ArrayList<String> placesCopy = new ArrayList<>();
+    private final ArrayList<String> placesCopy = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manage_places);
+
+        binding = ActivityManagePlacesBinding.inflate(getLayoutInflater());
+
+        setContentView(binding.getRoot());
 
         FileAccessor fileAccessor = new FileAccessor(this);
         places = (ArrayList<String>) fileAccessor.readFile();
@@ -34,11 +42,12 @@ public class ManagePlacesActivity extends AppCompatActivity {
         ManagePlacesRecViewAdapter adapter = new ManagePlacesRecViewAdapter();
         adapter.setPlaces(places);
 
-        recyclerView = findViewById(R.id.places_list);
+        recyclerView = binding.placesList;
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        findViewById(R.id.back).setOnClickListener(new View.OnClickListener() {
+        // Top corner back button functionality
+        binding.back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 goBack();
@@ -48,9 +57,11 @@ public class ManagePlacesActivity extends AppCompatActivity {
         ItemTouchHelper.Callback callback = new ItemTouchHelperCallback(adapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
         touchHelper.attachToRecyclerView(recyclerView);
-
     }
 
+    /**
+     * Save changes to saved places file and go back to main activity
+     */
     public void goBack() {
         if (places.equals(placesCopy)) {
             finish();
@@ -62,6 +73,9 @@ public class ManagePlacesActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * Call goBack() when system back button is pressed
+     */
     @Override
     public void onBackPressed() {
         goBack();
