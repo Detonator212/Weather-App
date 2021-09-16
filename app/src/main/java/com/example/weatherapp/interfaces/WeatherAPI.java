@@ -1,9 +1,9 @@
-package com.example.weatherapp;
+package com.example.weatherapp.interfaces;
 
-import java.util.List;
+import com.example.weatherapp.weatherblock.WeatherBlockRoot;
+
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface WeatherAPI {

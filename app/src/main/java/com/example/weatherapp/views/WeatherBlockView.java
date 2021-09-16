@@ -1,6 +1,5 @@
-package com.example.weatherapp;
+package com.example.weatherapp.views;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -11,14 +10,13 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
+import com.example.weatherapp.R;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.util.Collection;
 import java.util.Date;
 
-public class WeatherBlockUI extends LinearLayout {
+public class WeatherBlockView extends LinearLayout {
 
     TextView temperature;
     ImageView image;
@@ -26,7 +24,7 @@ public class WeatherBlockUI extends LinearLayout {
     TextView day;
     TextView time;
 
-    public WeatherBlockUI(Context context, @Nullable AttributeSet attrs) {
+    public WeatherBlockView(Context context, @Nullable AttributeSet attrs) {
         super(context);
 
         inflate(context, R.layout.weather_block_ui, this);

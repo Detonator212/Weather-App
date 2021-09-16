@@ -1,4 +1,4 @@
-package com.example.weatherapp;
+package com.example.weatherapp.views;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -9,14 +9,16 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 
-public class WeatherBlocksContainer extends LinearLayout {
+import com.example.weatherapp.R;
+
+public class WeatherBlocksContainerView extends LinearLayout {
 
     TextView locationTitle;
     CardView cardView;
     LinearLayout linearLayout;
     ProgressBar progressBar;
 
-    public WeatherBlocksContainer(@NonNull Context context) {
+    public WeatherBlocksContainerView(@NonNull Context context) {
         super(context);
 
         inflate(context, R.layout.weather_blocks_container, this);
@@ -25,6 +27,14 @@ public class WeatherBlocksContainer extends LinearLayout {
         cardView = findViewById(R.id.card_view);
         linearLayout = findViewById(R.id.linear_layout);
         progressBar = findViewById(R.id.progressBar);
+    }
+
+    public LinearLayout getLinearLayout() {
+        return linearLayout;
+    }
+
+    public TextView getLocationTitle() {
+        return locationTitle;
     }
 
     public void setLocationTitle(String locationTitle) {

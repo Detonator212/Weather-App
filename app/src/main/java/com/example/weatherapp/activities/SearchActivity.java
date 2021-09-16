@@ -1,32 +1,30 @@
-package com.example.weatherapp;
+package com.example.weatherapp.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.SearchView;
 
+import com.example.weatherapp.adapters.CitiesRecViewAdapter;
+import com.example.weatherapp.FileAccessor;
+import com.example.weatherapp.ListCity;
+import com.example.weatherapp.interfaces.OnCityClickListener;
+import com.example.weatherapp.R;
 import com.example.weatherapp.databinding.ActivitySearchBinding;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 
 public class SearchActivity extends AppCompatActivity implements OnCityClickListener {
 

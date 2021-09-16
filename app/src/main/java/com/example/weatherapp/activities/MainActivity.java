@@ -1,4 +1,4 @@
-package com.example.weatherapp;
+package com.example.weatherapp.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +13,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.weatherapp.R;
+import com.example.weatherapp.fragments.WeatherListFragment;
 import com.example.weatherapp.databinding.ActivityMainBinding;
 
 import android.view.MenuItem;

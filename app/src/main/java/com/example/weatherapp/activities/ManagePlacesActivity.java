@@ -1,4 +1,4 @@
-package com.example.weatherapp;
+package com.example.weatherapp.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -8,6 +8,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+
+import com.example.weatherapp.FileAccessor;
+import com.example.weatherapp.ItemTouchHelperCallback;
+import com.example.weatherapp.adapters.ManagePlacesRecViewAdapter;
+import com.example.weatherapp.R;
 
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.example.weatherapp;
+package com.example.weatherapp.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,6 +12,14 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.weatherapp.FileAccessor;
+import com.example.weatherapp.interfaces.WeatherAPI;
+import com.example.weatherapp.WeatherApiGenerator;
+import com.example.weatherapp.weatherblock.WeatherBlock;
+import com.example.weatherapp.weatherblock.WeatherBlockRoot;
+import com.example.weatherapp.activities.MainActivity;
+import com.example.weatherapp.views.WeatherBlockView;
+import com.example.weatherapp.views.WeatherBlocksContainerView;
 import com.example.weatherapp.databinding.FragmentWeatherListBinding;
 
 import java.io.File;
@@ -39,8 +47,8 @@ public class WeatherListFragment extends Fragment {
      */
     private MainActivity activity;
 
-    private List<WeatherBlocksContainer> weatherBlocksContainers = new ArrayList<>();
-    private List<WeatherBlockUI> weatherBlockUIS = new ArrayList<>();
+    private List<WeatherBlocksContainerView> weatherBlocksContainerViews = new ArrayList<>();
+    private List<WeatherBlockView> weatherBlockViews = new ArrayList<>();
 
     /**
      * Constructor to define the activity this fragment is in
@@ -77,13 +85,13 @@ public class WeatherListFragment extends Fragment {
 
         // Initial fetching of all weather data and displaying on UI
         for (String city : cities) {
-            WeatherBlocksContainer newWeatherBlocksContainer = new WeatherBlocksContainer(getContext());
-            newWeatherBlocksContainer.setLocationTitle(city);
+            WeatherBlocksContainerView newWeatherBlocksContainerView = new WeatherBlocksContainerView(getContext());
+            newWeatherBlocksContainerView.setLocationTitle(city);
             if (city.equals(cities.get(0))){
-                newWeatherBlocksContainer.locationTitle.setVisibility(getView().GONE); }
-            linearLayout.addView(newWeatherBlocksContainer);
-            weatherBlocksContainers.add(newWeatherBlocksContainer);
-            fetchWeatherData(city, newWeatherBlocksContainer);
+                newWeatherBlocksContainerView.getLocationTitle().setVisibility(getView().GONE); }
+            linearLayout.addView(newWeatherBlocksContainerView);
+            weatherBlocksContainerViews.add(newWeatherBlocksContainerView);
+            fetchWeatherData(city, newWeatherBlocksContainerView);
         }
 
         return binding.getRoot();
@@ -112,12 +120,12 @@ public class WeatherListFragment extends Fragment {
      * Refresh list of weather data
      */
     private void refresh() {
-        weatherBlockUIS = new ArrayList<>();
+        weatherBlockViews = new ArrayList<>();
         int count = 0;
-        for (WeatherBlocksContainer weatherBlocksContainer : weatherBlocksContainers) {
-            weatherBlocksContainer.addLoadingIcon();
-            weatherBlocksContainer.clearContents();
-            fetchWeatherData(cities.get(count), weatherBlocksContainer);
+        for (WeatherBlocksContainerView weatherBlocksContainerView : weatherBlocksContainerViews) {
+            weatherBlocksContainerView.addLoadingIcon();
+            weatherBlocksContainerView.clearContents();
+            fetchWeatherData(cities.get(count), weatherBlocksContainerView);
             count++;
         }
     }
@@ -134,9 +142,9 @@ public class WeatherListFragment extends Fragment {
     /**
      * Fetch weather data from API and display in UI
      * @param location Name of location to fetch weather data for
-     * @param weatherBlocksContainer Which card view to add fetched data to
+     * @param weatherBlocksContainerView Which card view to add fetched data to
      */
-    private void fetchWeatherData(String location, WeatherBlocksContainer weatherBlocksContainer) {
+    private void fetchWeatherData(String location, WeatherBlocksContainerView weatherBlocksContainerView) {
         WeatherAPI weatherAPI = WeatherApiGenerator.createService(WeatherAPI.class);
 
         Call<WeatherBlockRoot> call = weatherAPI.getWeather(location, WeatherAPI.apiKey);
@@ -161,22 +169,22 @@ public class WeatherListFragment extends Fragment {
 
                 // Add each of block of weather data to card view
                 for (WeatherBlock weatherBlock : weatherBlocks) {
-                    WeatherBlockUI newWeatherBlockUI = new WeatherBlockUI(getContext(), null);
+                    WeatherBlockView newWeatherBlockView = new WeatherBlockView(getContext(), null);
 
-                    newWeatherBlockUI.setTemperature(weatherBlock.getMain().getTemp());
-                    newWeatherBlockUI.setIcon(weatherBlock.getWeather().get(0).getIcon());
-                    newWeatherBlockUI.setDescription(weatherBlock.getWeather().get(0).getDescription());
-                    newWeatherBlockUI.setDate(weatherBlock.getTime().substring(0, 10));
-                    newWeatherBlockUI.setTime(weatherBlock.getTime().substring(11, 16));
+                    newWeatherBlockView.setTemperature(weatherBlock.getMain().getTemp());
+                    newWeatherBlockView.setIcon(weatherBlock.getWeather().get(0).getIcon());
+                    newWeatherBlockView.setDescription(weatherBlock.getWeather().get(0).getDescription());
+                    newWeatherBlockView.setDate(weatherBlock.getTime().substring(0, 10));
+                    newWeatherBlockView.setTime(weatherBlock.getTime().substring(11, 16));
 
-                    weatherBlockUIS.add(newWeatherBlockUI);
-                    newWeatherBlockUI.setTheme(lightCardTheme);
+                    weatherBlockViews.add(newWeatherBlockView);
+                    newWeatherBlockView.setTheme(lightCardTheme);
 
-                    LinearLayout linearLayout = weatherBlocksContainer.linearLayout;
-                    linearLayout.addView(newWeatherBlockUI);
+                    LinearLayout linearLayout = weatherBlocksContainerView.getLinearLayout();
+                    linearLayout.addView(newWeatherBlockView);
                 }
 
-                weatherBlocksContainer.removeLoadingIcon();
+                weatherBlocksContainerView.removeLoadingIcon();
                 numRefreshedLocations++;
                 checkIfRefreshComplete();
             }
@@ -255,11 +263,11 @@ public class WeatherListFragment extends Fragment {
         // TODO add night backgrounds
         activity.setBackgroundImage(background + "_day");
 
-        for (WeatherBlocksContainer weatherBlocksContainer : weatherBlocksContainers) {
-            weatherBlocksContainer.setCardColor(lightCardTheme);
+        for (WeatherBlocksContainerView weatherBlocksContainerView : weatherBlocksContainerViews) {
+            weatherBlocksContainerView.setCardColor(lightCardTheme);
         }
-        for (WeatherBlockUI weatherBlockUI : weatherBlockUIS) {
-            weatherBlockUI.setTheme(lightCardTheme);
+        for (WeatherBlockView weatherBlockView : weatherBlockViews) {
+            weatherBlockView.setTheme(lightCardTheme);
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.weatherapp;
+package com.example.weatherapp.adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,9 +8,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.sql.Struct;
+import com.example.weatherapp.interfaces.ItemTouchHelperAdapter;
+import com.example.weatherapp.R;
+
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
