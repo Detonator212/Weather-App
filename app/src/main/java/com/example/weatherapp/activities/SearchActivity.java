@@ -26,20 +26,42 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+/**
+ * Activity for searching for a new location
+ */
 public class SearchActivity extends AppCompatActivity implements OnCityClickListener {
 
     private ActivitySearchBinding binding;
 
-    private RecyclerView citiesRecView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
 
         binding = ActivitySearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Setup recycler view of cities
+        ArrayList<ListCity> listCities = jsonStringToList(readCitiesJson());
+        CitiesRecViewAdapter adapter = new CitiesRecViewAdapter(this);
+        adapter.setListCities(listCities);
+        RecyclerView citiesRecView = binding.citiesList;
+        citiesRecView.setAdapter(adapter);
+        citiesRecView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Search bar functionality
+        binding.search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(java.lang.String s) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(java.lang.String s) {
+                adapter.filter(s);
+                return true;
+            }
+        });
+
+        // Top corner back button functionality
         binding.back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -47,43 +69,9 @@ public class SearchActivity extends AppCompatActivity implements OnCityClickList
                 finish();
             }
         });
-
-        citiesRecView = binding.citiesList;
-
-        ArrayList<ListCity> listCities = new ArrayList<>();
-
-        try {
-            JSONArray jsonArray = new JSONArray(readCitiesJson());
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject currentObj = jsonArray.getJSONObject(i);
-                listCities.add(new ListCity(currentObj.getString("name"), currentObj.getString("country")));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        CitiesRecViewAdapter adapter = new CitiesRecViewAdapter(this);
-        adapter.setListCities(listCities);
-
-        citiesRecView.setAdapter(adapter);
-        citiesRecView.setLayoutManager(new LinearLayoutManager(this));
-
-        binding.search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(java.lang.String s) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(java.lang.String s) {
-                adapter.filter(s);
-                return true;
-            }
-        });
     }
 
-    public void hideKeyboard() {
+    private void hideKeyboard() {
         Activity activity = this;
         InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         View view = activity.getCurrentFocus();
@@ -93,8 +81,12 @@ public class SearchActivity extends AppCompatActivity implements OnCityClickList
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    public java.lang.String readCitiesJson() {
-        java.lang.String json = null;
+    /**
+     * Read the world-cities file
+     * @return A string of all the cities in the world
+     */
+    private String readCitiesJson() {
+        String json = null;
         try {
             InputStream is = this.getAssets().open("world-cities.json");
             int size = is.available();
@@ -107,6 +99,27 @@ public class SearchActivity extends AppCompatActivity implements OnCityClickList
             return null;
         }
         return json;
+    }
+
+    /**
+     * Convert string of json file to arraylist
+     * @param jsonString String of json file
+     * @return ArrayList of ListCity objects
+     */
+    private ArrayList<ListCity> jsonStringToList(String jsonString) {
+        ArrayList<ListCity> listCities = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(jsonString);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject currentObj = jsonArray.getJSONObject(i);
+                listCities.add(new ListCity(currentObj.getString("name"), currentObj.getString("country")));
+            }
+            return listCities;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override
