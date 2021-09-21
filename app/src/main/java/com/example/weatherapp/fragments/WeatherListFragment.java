@@ -217,9 +217,17 @@ public class WeatherListFragment extends Fragment {
      * @param icon OpenWeather assigned icon to these weather conditions
      */
     private void setTheme(String icon) {
-        icon = icon.substring(0,2);
+        String weatherIcon = icon.substring(0,2);
+
+        String dayOrNight;
+        if (icon.charAt(2) == 'd') {
+            dayOrNight = "_day";
+        } else {
+            dayOrNight = "_night";
+        }
+
         String background;
-        switch (icon) {
+        switch (weatherIcon) {
             case "01":
                 background = "clear";
                 lightCardTheme = true;
@@ -260,8 +268,8 @@ public class WeatherListFragment extends Fragment {
                 lightCardTheme = false;
                 throw new IllegalStateException("Unexpected value: " + icon);
         }
-        // TODO add night backgrounds
-        activity.setBackgroundImage(background + "_day");
+
+        activity.setBackgroundImage(background + dayOrNight);
 
         for (WeatherBlocksContainerView weatherBlocksContainerView : weatherBlocksContainerViews) {
             weatherBlocksContainerView.setCardColor(lightCardTheme);
