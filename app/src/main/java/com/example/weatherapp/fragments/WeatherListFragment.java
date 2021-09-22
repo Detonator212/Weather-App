@@ -219,13 +219,6 @@ public class WeatherListFragment extends Fragment {
     private void setTheme(String icon) {
         String weatherIcon = icon.substring(0,2);
 
-        String dayOrNight;
-        if (icon.charAt(2) == 'd') {
-            dayOrNight = "_day";
-        } else {
-            dayOrNight = "_night";
-        }
-
         String background;
         switch (weatherIcon) {
             case "01":
@@ -267,6 +260,16 @@ public class WeatherListFragment extends Fragment {
             default:
                 lightCardTheme = false;
                 throw new IllegalStateException("Unexpected value: " + icon);
+        }
+
+        // TODO add extra dark mode for night time
+
+        String dayOrNight;
+        if (icon.charAt(2) == 'd') {
+            dayOrNight = "_day";
+        } else {
+            dayOrNight = "_night";
+            lightCardTheme = false;
         }
 
         activity.setBackgroundImage(background + dayOrNight);
